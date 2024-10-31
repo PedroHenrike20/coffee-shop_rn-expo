@@ -1,11 +1,13 @@
 export interface ProductModel {
     id: string;
-    assessement: number;
+    assessment: number;
     name: string;
     typeProduct: string; 
     description: string;
     price: number;
     category: string;
     isActive: boolean;
+    imageMediumUrl: string;
+    imageSmallUrl: string;
 
 }

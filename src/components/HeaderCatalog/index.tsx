@@ -1,6 +1,5 @@
-import React, { useContext, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { Alert, Text, View } from "react-native";
-import CustomNavBar, { TabNavBar } from "../CustomNavBar";
 import CustomButton from "../CustomButton";
 import CustomInput from "../CustomInput";
 import { LinearGradient } from "expo-linear-gradient";
@@ -9,22 +8,21 @@ import styles from "./styles";
 import { AuthContextModel } from "@/src/models/AuthContextModel";
 import { AuthContext } from "@/src/context/AuthContext";
 import CardPromoContainer from "../CardPromoContainer";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/src/redux/store";
+import { setStoreSelected } from "@/src/redux/storeSlice";
 
-const HeaderCatalog: React.FC = () => {
-  const { logout, user } = useContext<AuthContextModel>(AuthContext);
+export interface StoresItemPicker {
+  label: string;
+  value: string;
+}
 
-  const [location, setLocation] = useState(1);
-  const [locations, setLocations] = useState([
-    { label: "Av Brasil, SP", value: 1 },
-  ]);
 
-  const navTabs: TabNavBar[] = [
-    { title: "Ver todos", value: "all" },
-    { title: "Machiato", value: "machiato" },
-    { title: "Latte", value: "latte" },
-    { title: "Americano", value: "americano" },
-    { title: "Capuccino", value: "capuccino" },
-  ];
+const HeaderCatalog: React.FC = React.memo(() => {
+  const { logout, userModel } = useContext<AuthContextModel>(AuthContext);
+  const dispatch = useDispatch();
+  const { listStore, storeSelected } = useSelector((state: RootState) => state.store);
+
 
   const confirmLogout = () => {
     Alert.alert("Confirmação", "Tem certeza que deseja sair da sua conta?", [
@@ -51,24 +49,27 @@ const HeaderCatalog: React.FC = () => {
         end={{ x: 0, y: 0 }}
       >
         <View style={styles.containerNameUser}>
-            <Text style={styles.textNameUser}>Olá, {user?.displayName ?? 'seja bem-vindo'}!</Text>
-          </View>
+        
+          <Text style={styles.textNameUser}>
+          {userModel && userModel?.fullName && `Olá, ${userModel?.fullName}!`}
+          </Text>
+          
+        </View>
         <View style={styles.containerRowHeader}>
           <View>
             <Text style={styles.labelLocation}>Localização</Text>
             <RNPickerSelect
-              items={[{ label: "Av Brasil, SP", value: 1 }]}
-              onValueChange={(value) => setLocation(value)}
+              items={listStore || []}
+              onValueChange={(value) => dispatch(setStoreSelected(value))}
               doneText="Pronto"
-              value={location}
+              value={storeSelected}
               pickerProps={{ renderToHardwareTextureAndroid: true }}
               style={{
                 placeholder: styles.textStyleDropdown,
                 inputIOS: styles.textStyleDropdown,
                 inputAndroid: styles.textStyleDropdown,
-                chevron: { backgroundColor: "grey" },
               }}
-              placeholder={{ label: "Selecione uma cafeteria...", value: null }}
+              placeholder={{ label: "Selecione uma cafeteria...", value: "" }}
             />
           </View>
           <View>
@@ -106,10 +107,9 @@ const HeaderCatalog: React.FC = () => {
       </LinearGradient>
       <View style={styles.containerSecundary}>
         <CardPromoContainer />
-        <CustomNavBar tabs={navTabs} />
       </View>
     </View>
   );
-};
+});
 
 export default HeaderCatalog;

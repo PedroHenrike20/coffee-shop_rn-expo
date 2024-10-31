@@ -60,16 +60,14 @@ const styles = StyleSheet.create({
   },
 
   containerNameUser: {
-    flex: 1,
-    height: "100%",
-    alignItems: "center",
+    height: 25,
   },
 
   textNameUser: {
     color: "#D8D8D8",
     fontSize: 16,
     fontWeight: 'semibold',
-    textAlign: "center"
+    textAlign: "center",
   }
 
   

@@ -5,6 +5,7 @@ const styles = StyleSheet.create({
     containerNavBar: {
         flexDirection: "row",
         height: 29,
+        marginHorizontal: 24
     },
 
     tabButtonNav: {

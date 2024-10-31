@@ -1,11 +1,13 @@
+import { GeoPoint } from "firebase/firestore";
 import { OrderModel } from "./OrderModel";
 
 export interface UserModel {
-  fullName: string;
+  uid: string;
+  fullName: string | null;
   city: string;
   address: string;
   phone: string;
-  location: string;
-  orderHistory: Omit<OrderModel, 'userId'>[]
+  location: GeoPoint | null;
+  orderHistory?: Omit<OrderModel, 'userId'>[] | null
   createdAt: Date;
 }

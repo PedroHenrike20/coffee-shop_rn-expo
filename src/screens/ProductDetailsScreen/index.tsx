@@ -4,11 +4,21 @@ import styles from "./styles";
 import { AntDesign, Feather, Ionicons } from "@expo/vector-icons";
 import CustomButtonIconSelected from "@/src/components/CustomButtonIconSelected";
 import CustomFooterDetailsProduct from "@/src/components/CustomFooterDetailsProduct";
+import { RouteProp, useRoute } from "@react-navigation/native";
+import { RootStackTabParamList } from "@/src/navigation/types";
+import { ProductModel } from "@/src/models/ProductModel";
 
 
 const ProductDetailsScreen: React.FC = () => {
   const [isHotDrink, setIsHotDrink] = useState(true);
   const [sizeDrink, setSizeDrink] = useState<"P" | "M" | "G">("P");
+  const [product, setProduct] = useState<ProductModel>();
+
+  const route = useRoute<RouteProp<RootStackTabParamList>>();
+
+  useEffect(() => {
+    setProduct(route.params?.product);
+  }, [])
 
   return (
     <>
@@ -16,19 +26,19 @@ const ProductDetailsScreen: React.FC = () => {
         <View style={styles.containerImg}>
           <Image
             style={styles.imgProduct}
-            source={require("../../../assets/images/product_detail.png")}
+            source={{uri: product?.imageMediumUrl}}
           />
         </View>
         <View>
           <View style={styles.containerRowDetails}>
             <View style={styles.containerColumnDetails}>
               <View style={styles.containerText}>
-                <Text style={styles.textTitle}>Cafe Mocha</Text>
+                <Text style={styles.textTitle}>{product?.name}</Text>
                 <Text style={styles.legendProduct}>Gelado/Quente</Text>
               </View>
               <View style={styles.containerAssessment}>
                 <AntDesign name="star" color="#FBBE21" size={20} />
-                <Text style={styles.textAssessment}>4.5</Text>
+                <Text style={styles.textAssessment}>{product?.assessment}</Text>
                 <Text style={styles.textQuantity}>(344)</Text>
               </View>
             </View>
@@ -68,8 +78,7 @@ const ProductDetailsScreen: React.FC = () => {
         <View style={styles.containerDescription}>
           <Text style={styles.labelContent}>Descrição</Text>
           <Text style={styles.textDescription}>
-            Um cappuccino é uma bebida de aproximadamente 150 ml (5 onças),
-            sendo 25 ml de café expresso e 85 ml de leite fresco.
+            {product?.description}
           </Text>
         </View>
         <View style={styles.containerSizeDrink}>
@@ -115,7 +124,7 @@ const ProductDetailsScreen: React.FC = () => {
           </View>
         </View>
       </ScrollView>
-      <CustomFooterDetailsProduct />
+      <CustomFooterDetailsProduct price={product?.price!} />
     </>
   );
 };

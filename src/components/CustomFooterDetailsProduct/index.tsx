@@ -3,7 +3,11 @@ import { Text, View } from "react-native";
 import styles from "./style";
 import CustomButton from "../CustomButton";
 
-const CustomFooterDetailsProduct: React.FC = () => {
+type CustomFooterDetailsProductProp = {
+  price: number
+}
+
+const CustomFooterDetailsProduct: React.FC<CustomFooterDetailsProductProp> = ({price}) => {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -19,7 +23,7 @@ const CustomFooterDetailsProduct: React.FC = () => {
         <View style={styles.container}>
           <View style={styles.containerPriceProduct}>
             <Text style={styles.labelPrice}>Preço</Text>
-            <Text style={styles.textPrice}>R$ 5,44</Text>
+            <Text style={styles.textPrice}>{Intl.NumberFormat('pt-BR', {style: "currency", currency: "BRL"}).format(price)}</Text>
           </View>
           <View style={styles.containerButtonBuy}>
             <CustomButton title={"Comprar Agora"} />

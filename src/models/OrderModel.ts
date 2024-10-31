@@ -6,6 +6,7 @@ type ProductOrderModel = {
 }
 
 export interface OrderModel {
+    id: string;
     userId: string;
     storeId: string;
     products: ProductOrderModel[];
