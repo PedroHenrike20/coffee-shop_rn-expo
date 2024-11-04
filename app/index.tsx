@@ -9,7 +9,6 @@ import store from "@/src/redux/store";
 const App: React.FC = () => {
   return (
     <GestureHandlerRootView style={{ flex: 1, backgroundColor: "#FFF" }}>
-      {/* <StatusBar style="light" backgroundColor="#000" translucent animated /> */}
       <AuthProvider>
         <Provider store={store}>
           <StackNavigationLogin />

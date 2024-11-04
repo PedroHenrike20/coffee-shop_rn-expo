@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import styles from "./styles";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/src/redux/store";
-import { setCategorySelected, setListProductsFiltered } from "@/src/redux/storeSlice";
+import { setCategorySelected } from "@/src/redux/productSlice";
 
 export interface TabNavBar {
   title: string;
@@ -15,10 +15,10 @@ type CustomNavBarProps = {
   tabs: TabNavBar[];
 };
 
-const CustomNavBar: React.FC<CustomNavBarProps> = ({ tabs }) => {
+const CustomNavBar: React.FC<CustomNavBarProps> = React.memo(({ tabs }) => {
   const dispatch = useDispatch();
   const { categorySelected } = useSelector(
-    (value: RootState) => value.store
+    (value: RootState) => value.products
   );
 
 
@@ -52,6 +52,6 @@ const CustomNavBar: React.FC<CustomNavBarProps> = ({ tabs }) => {
       ))}
     </ScrollView>
   );
-};
+});
 
 export default CustomNavBar;

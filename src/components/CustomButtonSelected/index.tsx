@@ -2,13 +2,15 @@ import React, { ReactNode } from "react";
 import { TouchableOpacityProps, TouchableOpacity, View } from "react-native";
 import styles from "./styles";
 
-interface CustomButtonIconSelectedProps extends TouchableOpacityProps {
+interface CustomButtonSelectedProps extends TouchableOpacityProps {
   isSelected: boolean;
+  isActive?: boolean;
   children: ReactNode;
 }
 
-const CustomButtonIconSelected: React.FC<CustomButtonIconSelectedProps> = ({
+const CustomButtonSelected: React.FC<CustomButtonSelectedProps> = React.memo(({
   isSelected,
+  isActive = true,
   children,
   ...props
 }) => {
@@ -18,7 +20,7 @@ const CustomButtonIconSelected: React.FC<CustomButtonIconSelectedProps> = ({
       style={[
         styles.actionItemButton,
         {
-          backgroundColor: isSelected ? "#F9F2ED" : "#FFF",
+          backgroundColor: isSelected ? "#F9F2ED" : !isActive ? "#E3E3E3" : "#FFF",
           borderColor: isSelected ? "#C67C4E" : "#E3E3E3",
         },
       ]}
@@ -26,6 +28,6 @@ const CustomButtonIconSelected: React.FC<CustomButtonIconSelectedProps> = ({
       {children}
     </TouchableOpacity>
   );
-};
+});
 
-export default CustomButtonIconSelected;
+export default CustomButtonSelected;

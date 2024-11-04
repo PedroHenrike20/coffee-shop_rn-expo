@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext } from "react";
 import { Image, Text, View } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import styles from "./styles";

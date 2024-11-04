@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Alert, Pressable, Text, View } from "react-native";
 import CustomButton from "@/src/components/CustomButton";
 import * as AuthSession from "expo-auth-session";
@@ -45,19 +45,23 @@ const LoginEntryScreen: React.FC<PropsRoute> = () => {
       signInWithCredential(getAuth(), credential)
         .then(async (userCredencial) => {
           const user = userCredencial.user;
-          navigator.navigate("CreateAccount", {createAccountWithGoogle: true, uid: user.uid});
+          navigator.navigate("CreateAccount", {
+            createAccountWithGoogle: true,
+            uid: user.uid,
+          });
         })
         .catch((e) => {
           Alert.alert("Erro ao se conectar com a sua conta Google!");
         });
     }
+    return () => {};
   }, [response]);
 
-
-
   const navigateToCreateNewAccount = () => {
-    navigator.navigate("CreateAccount", {createAccountWithGoogle: false, uid: null})
-    
+    navigator.navigate("CreateAccount", {
+      createAccountWithGoogle: false,
+      uid: null,
+    });
   };
 
   const navigateToLogin = () => {

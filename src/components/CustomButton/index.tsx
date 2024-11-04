@@ -23,7 +23,7 @@ interface PropsButton extends TouchableOpacityProps {
   color?: "primary" | "secundary" | "transparent";
 }
 
-const CustomButton: React.FC<PropsButton> = ({
+const CustomButton: React.FC<PropsButton> = React.memo(({
   title,
   icon,
   color = "primary",
@@ -62,6 +62,6 @@ const CustomButton: React.FC<PropsButton> = ({
       </View>
     </TouchableOpacity>
   );
-};
+});
 
 export default CustomButton;

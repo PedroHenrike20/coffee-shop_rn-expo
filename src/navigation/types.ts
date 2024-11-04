@@ -1,5 +1,3 @@
-import { ProductModel } from "../models/ProductModel"
-
 export type RootStackLoginParamList = {
     Home: undefined,
     Login: undefined,
@@ -10,6 +8,6 @@ export type RootStackLoginParamList = {
 
 export type RootStackTabParamList = {
     Catalog: undefined,
-    ProductDetails: {product: ProductModel},
+    ProductDetails: {productId: string},
     
 }

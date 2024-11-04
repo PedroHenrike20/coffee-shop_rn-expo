@@ -1,30 +1,60 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import { Alert, Text, View } from "react-native";
-import CustomButton from "../CustomButton";
-import CustomInput from "../CustomInput";
+import CustomButton from "../../../../components/CustomButton";
+import CustomInput from "../../../../components/CustomInput";
 import { LinearGradient } from "expo-linear-gradient";
 import RNPickerSelect from "react-native-picker-select";
 import styles from "./styles";
 import { AuthContextModel } from "@/src/models/AuthContextModel";
 import { AuthContext } from "@/src/context/AuthContext";
-import CardPromoContainer from "../CardPromoContainer";
+import CardPromoContainer from "../../../../components/CardPromoContainer";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/src/redux/store";
 import { setStoreSelected } from "@/src/redux/storeSlice";
+import { setListProductsFiltered } from "@/src/redux/productSlice";
 
 export interface StoresItemPicker {
   label: string;
   value: string;
 }
 
-
 const HeaderCatalog: React.FC = React.memo(() => {
   const { logout, userModel } = useContext<AuthContextModel>(AuthContext);
   const dispatch = useDispatch();
-  const { listStore, storeSelected } = useSelector((state: RootState) => state.store);
+  const [valueProductFilter, setValueProductFilter] = useState("");
+  const { listStore, storeSelected } = useSelector(
+    (state: RootState) => state.store
+  );
 
+  const { listProducts, listProductsFiltered, categorySelected } = useSelector(
+    (state: RootState) => state.products
+  );
 
-  const confirmLogout = () => {
+  const onFilterListCoffee = () => {
+    if (valueProductFilter.length > 0) {
+      dispatch(setListProductsFiltered(listProducts || []));
+      const filteredProducts =
+        listProductsFiltered?.filter(
+          (item) => item.name.toLowerCase().includes(valueProductFilter.toLowerCase())
+        ) || [];
+
+      dispatch(setListProductsFiltered(filteredProducts));
+    }
+  };
+  
+  const onSetFilterProduct = (value: string) => {
+    setValueProductFilter(value);
+    if (value.length === 0) {
+      if(categorySelected === "all"){
+        dispatch(setListProductsFiltered(listProducts || []));
+      }else{
+        const productsFilteredByCategory = listProducts?.filter(item => item.category === categorySelected) || [];
+        dispatch(setListProductsFiltered(productsFilteredByCategory));      
+      }
+    }
+  };
+
+  const confirmLogout = useCallback(() => {
     Alert.alert("Confirmação", "Tem certeza que deseja sair da sua conta?", [
       {
         text: "Cancelar",
@@ -38,7 +68,7 @@ const HeaderCatalog: React.FC = React.memo(() => {
         isPreferred: false,
       },
     ]);
-  };
+  }, [logout]);
 
   return (
     <View>
@@ -49,11 +79,9 @@ const HeaderCatalog: React.FC = React.memo(() => {
         end={{ x: 0, y: 0 }}
       >
         <View style={styles.containerNameUser}>
-        
           <Text style={styles.textNameUser}>
-          {userModel && userModel?.fullName && `Olá, ${userModel?.fullName}!`}
+            {userModel && userModel?.fullName && `Olá, ${userModel?.fullName}!`}
           </Text>
-          
         </View>
         <View style={styles.containerRowHeader}>
           <View>
@@ -84,11 +112,13 @@ const HeaderCatalog: React.FC = React.memo(() => {
             />
           </View>
         </View>
-
         <View style={styles.containerRowSearch}>
           <View style={styles.containerFlex}>
             <CustomInput
               iconPrefixSearch={true}
+              onChangeText={(value) => onSetFilterProduct(value)}
+              value={valueProductFilter}
+              editable={!!listProducts}
               placeholder="Procurar um café"
             />
           </View>
@@ -100,7 +130,7 @@ const HeaderCatalog: React.FC = React.memo(() => {
                 colorIcon: "#FFF",
                 position: "left",
               }}
-              onPress={() => {}}
+              onPress={onFilterListCoffee}
             />
           </View>
         </View>

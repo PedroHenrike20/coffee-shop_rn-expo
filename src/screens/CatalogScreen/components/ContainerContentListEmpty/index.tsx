@@ -1,20 +1,18 @@
 import { RootState } from "@/src/redux/store";
 import { FontAwesome5 } from "@expo/vector-icons";
-import React, { useEffect } from "react";
+import React from "react";
 import { ActivityIndicator, Text, View } from "react-native";
 import { useSelector } from "react-redux";
 import styles from "./styles";
 
 const ContainerContentListEmpty: React.FC = () => {
-  const {
-    listProducts,
-    listStore,
-    storeSelected,
-    listProductsFiltered,
-    isLoading,
-  } = useSelector((value: RootState) => value.store);
+  const { listStore, storeSelected, isLoading } = useSelector(
+    (value: RootState) => value.store
+  );
 
-  // console.log({listStore})
+  const { listProductsFiltered, listProducts } = useSelector(
+    (value: RootState) => value.products
+  );
 
   return (
     <View style={styles.container}>
@@ -51,6 +49,16 @@ const ContainerContentListEmpty: React.FC = () => {
             listStore.length > 0 && (
               <Text style={styles.labelMessageList}>
                 Selecione uma loja e comece a fazer o seu pedido agora mesmo!
+              </Text>
+            )}
+
+          {storeSelected &&
+            listProductsFiltered &&
+            listProductsFiltered.length === 0 &&
+            listProducts &&
+            listProducts.length > 0 && (
+              <Text style={styles.labelMessageList}>
+                Nenhum produto foi encontrado!
               </Text>
             )}
         </>

@@ -8,7 +8,7 @@ import { RootStackLoginParamList } from "@/src/navigation/types";
 import { NavigationProp, RouteProp, useRoute } from "@react-navigation/native";
 import { useNavigation } from "expo-router";
 import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
-import { doc, GeoPoint, setDoc } from "firebase/firestore";
+import { addDoc, collection, doc, GeoPoint, setDoc } from "firebase/firestore";
 import React, { useContext, useState } from "react";
 import { ActivityIndicator, Alert, Text, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
@@ -34,12 +34,6 @@ const CreateAccountScreen: React.FC = () => {
   const { setUser } = useContext<AuthContextModel>(AuthContext);
 
   const createAccountWithEmailAndPassword = async () => {
-    if (password.length < 6) {
-      return Alert.alert(
-        "Erro",
-        "Sua senha deve conter no mínimo 6 caracteres"
-      );
-    }
 
     if (password !== confirmPassword) {
       return Alert.alert("As senhas não coincidem!");
@@ -49,7 +43,8 @@ const CreateAccountScreen: React.FC = () => {
       !password ||
       !confirmPassword ||
       !city ||
-      !address
+      !address || 
+      !phone
     ) {
       return Alert.alert("Todos os campos são obrigatórios!");
     } else {
@@ -64,17 +59,48 @@ const CreateAccountScreen: React.FC = () => {
             address,
             city,
             fullName,
+            uid: null!,
             location: null,
-            orderHistory: null,
             phone,
             createdAt: new Date(),
           };
           await setDoc(doc(db, "users", userCreated.user.uid), userData);
+          const subCollectionOrdersRef = collection(
+            db,
+            `users/${userCreated.user.uid}/orderHistory`
+          );
+          await addDoc(subCollectionOrdersRef, {});
+
           setIsLoading(false);
         })
         .catch((e) => {
           setIsLoading(false);
-          Alert.alert("Não foi possível criar a sua conta!");
+
+          const errorCode = e?.code;
+
+          switch (errorCode) {
+            case "auth/invalid-email":
+              Alert.alert("Não foi possível", "Email inválido!");
+              break;
+            case "auth/email-already-in-use":
+              Alert.alert("Não foi possível", "Esse Email já está em uso!");
+              break;
+            case "auth/operation-not-allowed":
+              Alert.alert("Erro ao criar a conta", "Operação não permitida!");
+              break;
+            case "auth/weak-password":
+              Alert.alert(
+                "Não foi possível",
+                "A sua senha deve ter pelo menos 6 caracteres!"
+              );
+              break;
+            default:
+              Alert.alert(
+                "Erro ao criar a conta",
+                "Não foi possível criar a sua conta, tente novamente mais tarde!"
+              );
+              break;
+          }
         });
     }
   };
@@ -142,7 +168,7 @@ const CreateAccountScreen: React.FC = () => {
       />
 
       <View style={styles.containerLoading}>
-        {isLoading && <ActivityIndicator />}
+        {isLoading && <ActivityIndicator color="#C67C4E" size={35} />}
       </View>
     </KeyboardAwareScrollView>
   );

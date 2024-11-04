@@ -7,6 +7,7 @@ import styles from "./style";
 import CustomButton from "@/src/components/CustomButton";
 import { AuthContext } from "@/src/context/AuthContext";
 import { AuthContextModel } from "@/src/models/AuthContextModel";
+import { FirebaseError } from "firebase/app";
 
 const LoginScreen: React.FC = () => {
   const [titlePage, setTitlePage] = useState("Login");
@@ -17,13 +18,13 @@ const LoginScreen: React.FC = () => {
 
   const { login, recoverPassword } = useContext<AuthContextModel>(AuthContext);
 
-
   useEffect(() => {
     if (isRecoverPassword) {
       setTitlePage("Recuperar Senha");
     } else {
       setTitlePage("Login");
     }
+    return () => {};
   }, [isRecoverPassword]);
 
   const validateProceed = async () => {
@@ -56,9 +57,24 @@ const LoginScreen: React.FC = () => {
         .then(() => {
           setIsLoading(false);
         })
-        .catch((e) => {
+        .catch((e: FirebaseError) => {
           setIsLoading(false);
-          Alert.alert("Login", "E-mail ou senha estão incorretos!");
+          const errorCode = e.code;
+
+          switch (errorCode) {
+            case "auth/invalid-email":
+              Alert.alert("Login", "Email inválido!");
+              break;
+            case "auth/user-disabled":
+              Alert.alert("Login", "Usuário desabilitado!");
+              break;
+            case "auth/invalid-credential":
+              Alert.alert("Login", "Email e/ou senha estão incorretos!");
+              break;
+            default:
+              Alert.alert("Login", "Erro ao fazer login!");
+              break;
+          }
         });
     }
   };
@@ -125,7 +141,7 @@ const LoginScreen: React.FC = () => {
         />
       )}
       <View style={styles.containerLoading}>
-        {isLoading && <ActivityIndicator />}
+        {isLoading && <ActivityIndicator color="#C67C4E" size={35} />}
       </View>
     </KeyboardAwareScrollView>
   );

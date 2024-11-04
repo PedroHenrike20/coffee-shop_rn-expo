@@ -44,6 +44,8 @@ export default function TabNavigator() {
         options={{
           headerShown: false,
           tabBarShowLabel: false,
+          tabBarBadge: "1",
+          // tabBarBadgeStyle: {backgroundColor: "#C67C4E", color: "#FFF"},
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons name="heart" color={color} size={30} />
           ),

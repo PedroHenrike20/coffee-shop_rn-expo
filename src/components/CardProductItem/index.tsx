@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import styles from "./styles";
 import { AntDesign, MaterialCommunityIcons } from "@expo/vector-icons";
@@ -10,13 +10,13 @@ type CardProductItemProps = {
   onAddProduct: () => void;
 };
 
-const CardProductItem: React.FC<CardProductItemProps> = ({
+const CardProductItem: React.FC<CardProductItemProps> = React.memo(({
   onAddProduct,
   onCardPress,
   productItem,
 }) => {
   return (
-    <TouchableOpacity onPress={onCardPress}>
+    <TouchableOpacity onPress={useCallback(onCardPress, [])}>
       <View style={styles.containerCard}>
         <Image
           style={styles.imgProduct}
@@ -37,7 +37,7 @@ const CardProductItem: React.FC<CardProductItemProps> = ({
           </View>
           <View style={styles.containerRowAction}>
             <Text style={styles.textPriceProduct}>
-              {Intl.NumberFormat('pt-BR', {currency: 'BRL', style: "currency"}).format(productItem.price)}
+              {Intl.NumberFormat('pt-BR', {currency: 'BRL', style: "currency"}).format(productItem.prices.find(item => item.isActive === true)?.price!)}
             </Text>
             <TouchableOpacity onPress={onAddProduct} style={styles.addProductButton}>
               <MaterialCommunityIcons name="plus" size={22} color="#FFF" />
@@ -47,6 +47,6 @@ const CardProductItem: React.FC<CardProductItemProps> = ({
       </View>
     </TouchableOpacity>
   );
-};
+});
 
 export default CardProductItem;
