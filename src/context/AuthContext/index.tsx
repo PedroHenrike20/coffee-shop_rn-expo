@@ -15,6 +15,7 @@ import {
 import { collection, doc, GeoPoint, getDoc, getDocs } from "firebase/firestore";
 import { UserModel } from "@/src/models/UserModel";
 import { OrderModel } from "@/src/models/OrderModel";
+import { Alert } from "react-native";
 
 export const AuthContext = createContext<AuthContextModel>({
   user: null,
@@ -24,7 +25,7 @@ export const AuthContext = createContext<AuthContextModel>({
   recoverPassword: Promise.resolve,
   isLoggedIn: Boolean,
   setUser: () => {},
-  loadUserData: Promise.resolve
+  loadUserData: Promise.resolve,
 });
 
 export const AuthProvider: React.FC<AuthProvideModel> = ({ children }) => {
@@ -59,25 +60,14 @@ export const AuthProvider: React.FC<AuthProvideModel> = ({ children }) => {
         fullName: userData.fullName || "",
         address: userData.address || "",
         city: userData.city || "",
-        location: userData?.location instanceof GeoPoint ? userData.location : null,
+        location:
+          userData?.location instanceof GeoPoint ? userData.location : null,
         phone: userData.phone || "",
         createdAt: userData.createdAt
           ? userData.createdAt.toDate()
           : new Date(),
         orderHistory: null,
       };
-
-      const orderSnaphot = await getDocs(
-        collection(db, "users", uid, "orderHistory")
-      );
-      const orders: Omit<OrderModel, "userId">[] = orderSnaphot.docs.map(
-        (doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        })
-      ) as OrderModel[];
-
-      userModelMapped.orderHistory = orders;
 
       setUserModel(userModelMapped);
     } else {
@@ -111,7 +101,7 @@ export const AuthProvider: React.FC<AuthProvideModel> = ({ children }) => {
         recoverPassword,
         isLoggedIn,
         setUser,
-        loadUserData
+        loadUserData,
       }}
     >
       {children}

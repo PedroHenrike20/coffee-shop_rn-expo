@@ -1,7 +1,19 @@
-import React, { useEffect, useState } from "react";
-import { Image, ScrollView, Text, View } from "react-native";
+import React, { useContext, useEffect, useLayoutEffect, useState } from "react";
+import {
+  Alert,
+  Image,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import styles from "./styles";
-import { AntDesign, Feather, Ionicons } from "@expo/vector-icons";
+import {
+  AntDesign,
+  Feather,
+  Ionicons,
+  MaterialCommunityIcons,
+} from "@expo/vector-icons";
 import CustomFooterDetailsProduct from "@/src/components/CustomFooterDetailsProduct";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import { RootStackTabParamList } from "@/src/navigation/types";
@@ -9,16 +21,28 @@ import { PriceSizeProduct, ProductModel } from "@/src/models/ProductModel";
 import CustomButtonSelected from "@/src/components/CustomButtonSelected";
 import { useSelector } from "react-redux";
 import { RootState } from "@/src/redux/store";
-import { doc, onSnapshot } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  onSnapshot,
+  setDoc,
+} from "firebase/firestore";
 import { db } from "@/firebaseConfig";
+import { useNavigation } from "expo-router";
+import { AuthContext } from "@/src/context/AuthContext";
 
 const ProductDetailsScreen: React.FC = () => {
+  const { userModel } = useContext(AuthContext);
   const [isHotDrink, setIsHotDrink] = useState(true);
   const [priceSizeProduct, setPriceSizeProduct] = useState<PriceSizeProduct>();
   const [product, setProduct] = useState<ProductModel>();
   const { storeSelected } = useSelector((value: RootState) => value.store);
+  const [isFavoriteDrink, setIsFavoriteDrink] = useState(false);
 
   const route = useRoute<RouteProp<RootStackTabParamList>>();
+  const navigation = useNavigation();
+
   useEffect(() => {
     let productId = route.params?.productId;
 
@@ -34,8 +58,93 @@ const ProductDetailsScreen: React.FC = () => {
 
   useEffect(() => {
     setPriceSizeProduct(product?.prices.find((item) => item.isActive === true));
+    checkFavoriteDrink();
     return () => {};
   }, [product]);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: ({}) => (
+        <TouchableOpacity onPress={saveFavoriteDrink}>
+          {isFavoriteDrink ? (
+            <MaterialCommunityIcons name="heart" color="#ED5151" size={30} />
+          ) : (
+            <MaterialCommunityIcons
+              name="heart-outline"
+              color="#2A2A2A"
+              size={30}
+            />
+          )}
+        </TouchableOpacity>
+      ),
+    });
+  });
+
+  const checkFavoriteDrink = async () => {
+    try {
+      const favoriteProductRef = doc(
+        db,
+        "users",
+        userModel!.uid,
+        "favoriteDrinks",
+        storeSelected!,
+      );
+
+      const dataSnapFavoriteDrink = await getDoc(favoriteProductRef);
+
+      if (dataSnapFavoriteDrink.exists()) {
+        const productIds = dataSnapFavoriteDrink.data().listFavoriteDrinks || [];
+        setIsFavoriteDrink(productIds.includes(product!.id));
+      }else{
+        setIsFavoriteDrink(false);
+      }
+    } catch (e) {
+      setIsFavoriteDrink(false);
+    }
+  };
+
+  const saveFavoriteDrink = async () => { 
+    try {
+      const favoriteProductRef = doc(
+        db,
+        "users",
+        userModel!.uid,
+        "favoriteDrinks",
+        storeSelected!,
+      );
+
+      const dataSnapFavoriteDrink = await getDoc(favoriteProductRef);
+
+      if (!dataSnapFavoriteDrink.exists()) {
+        await setDoc(favoriteProductRef, {
+          listFavoriteDrinks: [product!.id],
+        })
+      }else{
+        const dataFavoriteDrink = dataSnapFavoriteDrink.data();
+        const productIds: string[] = dataFavoriteDrink.listFavoriteDrinks;
+
+        if(!productIds.includes(product!.id)){
+          productIds.push(product!.id);
+          await setDoc(favoriteProductRef, {
+            listFavoriteDrinks: productIds,
+          });
+        }else{
+          const updatedFavoriteDrinksIds = productIds.filter(productId => productId !== product!.id);
+          await setDoc(favoriteProductRef, {
+            listFavoriteDrinks: updatedFavoriteDrinksIds
+          });
+        }
+      }
+      
+      setIsFavoriteDrink(!isFavoriteDrink);
+
+    } catch (e) {
+      Alert.alert(
+        "Erro",
+        "Não foi possível adicionar esse produtos ao favorito"
+      );
+    }
+  };
 
   return (
     <>

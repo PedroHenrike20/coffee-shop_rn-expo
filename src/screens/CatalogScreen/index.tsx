@@ -223,7 +223,6 @@ const CatalogScreen: React.FC = () => {
 
       return unsubscribe;
     } catch (e) {
-      console.log(e);
       Alert.alert(
         "Erro",
         "Não foi possível carregar os produtos, tente novamente mais tarde!"

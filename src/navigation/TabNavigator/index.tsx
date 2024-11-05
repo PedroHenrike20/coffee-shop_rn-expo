@@ -5,9 +5,36 @@ import StackNavigatorTabHome from "../StackNavigatorTabHome";
 import FavoriteScreen from "@/src/screens/FavoriteScreen";
 import OrdersScreen from "@/src/screens/OrdersScreen";
 import NotificationScreen from "@/src/screens/NotificationScreen";
+import { useContext, useEffect, useState } from "react";
+import { AuthContext } from "@/src/context/AuthContext";
+import { RootState } from "@/src/redux/store";
+import { useSelector } from "react-redux";
+import { doc, onSnapshot } from "firebase/firestore";
+import { db } from "@/firebaseConfig";
 
 export default function TabNavigator() {
   const Tabs = createBottomTabNavigator();
+  const { userModel } = useContext(AuthContext);
+  const { storeSelected } = useSelector((state: RootState) => state.store);
+  const [countFavorite, setCountFavorite] = useState<number | undefined>(undefined);
+
+  useEffect(() => {
+    if (userModel?.uid && storeSelected) {
+      const favoriteDrinkRef = doc(
+        db,
+        `users/${userModel!.uid}/favoriteDrinks/${storeSelected}`
+      );
+      const unsubscribe = onSnapshot(favoriteDrinkRef, (doc) => {
+        if (doc.exists()) {
+          const data: string[] = doc.data().listFavoriteDrinks || [];
+          setCountFavorite(data.length === 0 ? undefined : data.length);
+        }else{
+          setCountFavorite(undefined);
+        }
+        return () => unsubscribe();
+      });
+    }
+  }, [storeSelected, userModel]);
 
   return (
     <Tabs.Navigator
@@ -44,7 +71,7 @@ export default function TabNavigator() {
         options={{
           headerShown: false,
           tabBarShowLabel: false,
-          tabBarBadge: "1",
+          tabBarBadge: countFavorite,
           // tabBarBadgeStyle: {backgroundColor: "#C67C4E", color: "#FFF"},
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons name="heart" color={color} size={30} />

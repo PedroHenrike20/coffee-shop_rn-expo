@@ -107,10 +107,10 @@ const styles = StyleSheet.create({
         width: "100%",
         flexDirection: "row",
         justifyContent: "space-between",
+        gap: 16,
     },
 
     containerTextButtonSize: {
-        paddingHorizontal: 42,
         paddingVertical: 10,
     },
 

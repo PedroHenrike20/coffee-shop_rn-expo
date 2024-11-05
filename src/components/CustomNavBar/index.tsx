@@ -18,7 +18,7 @@ type CustomNavBarProps = {
 const CustomNavBar: React.FC<CustomNavBarProps> = React.memo(({ tabs }) => {
   const dispatch = useDispatch();
   const { categorySelected } = useSelector(
-    (value: RootState) => value.products
+    (state: RootState) => state.products
   );
 
 

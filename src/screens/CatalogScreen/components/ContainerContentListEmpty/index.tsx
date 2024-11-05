@@ -7,11 +7,11 @@ import styles from "./styles";
 
 const ContainerContentListEmpty: React.FC = () => {
   const { listStore, storeSelected, isLoading } = useSelector(
-    (value: RootState) => value.store
+    (state: RootState) => state.store
   );
 
   const { listProductsFiltered, listProducts } = useSelector(
-    (value: RootState) => value.products
+    (state: RootState) => state.products
   );
 
   return (

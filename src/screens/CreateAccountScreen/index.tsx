@@ -53,7 +53,6 @@ const CreateAccountScreen: React.FC = () => {
       setUser(null);
       createUserWithEmailAndPassword(getAuth(), email, password)
         .then(async (userCreated) => {
-          // const geoPoint = new GeoPoint(0, 0);
 
           const userData: UserModel = {
             address,
@@ -69,7 +68,12 @@ const CreateAccountScreen: React.FC = () => {
             db,
             `users/${userCreated.user.uid}/orderHistory`
           );
+          const subCollectionFavoriteDrinks = collection(
+            db,
+            `users/${userCreated.user.uid}/favoriteDrinks`
+          );
           await addDoc(subCollectionOrdersRef, {});
+          await addDoc(subCollectionFavoriteDrinks, {});
 
           setIsLoading(false);
         })
