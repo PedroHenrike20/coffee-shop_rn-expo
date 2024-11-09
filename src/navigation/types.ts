@@ -6,8 +6,13 @@ export type RootStackLoginParamList = {
     TabNavigator: undefined,
 }
 
+export type RootTabParamList = {
+    TabHome: undefined,
+    Favorites: {productFavoriteIds: string[]},
+}
+
 export type RootStackTabParamList = {
     Catalog: undefined,
     ProductDetails: {productId: string},
-    
 }
+

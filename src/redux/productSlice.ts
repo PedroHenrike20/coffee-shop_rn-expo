@@ -7,6 +7,8 @@ interface ProductState {
   listProductsFiltered: ProductModel[] | null;
   listCategory: TabNavBar[];
   categorySelected: string;
+  listProductIdFavorite: string[];
+  isLoading: boolean;
 }
 
 const initialState: ProductState = {
@@ -14,6 +16,8 @@ const initialState: ProductState = {
   listProductsFiltered: null,
   listCategory: [{ title: "Ver todos", value: "all" }],
   categorySelected: "all",
+  listProductIdFavorite: [],
+  isLoading: false,
 };
 
 const productSlice = createSlice({
@@ -35,10 +39,20 @@ const productSlice = createSlice({
     setCategorySelected(state, action: PayloadAction<string>) {
       state.categorySelected = action.payload;
     },
+
+    setListProductIdFavorite(state, action: PayloadAction<string[]>) {
+      state.listProductIdFavorite = action.payload;
+    },
+    
+    setIsLoading(state, action: PayloadAction<boolean>) {
+      state.isLoading = action.payload;
+    }
   },
 });
 
 export const {
+  setIsLoading,
+  setListProductIdFavorite,
   setCategorySelected,
   setListCategory,
   setListProducts,

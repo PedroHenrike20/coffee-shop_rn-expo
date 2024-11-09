@@ -1,4 +1,3 @@
-import CardProductItem from "@/src/components/CardProductItem";
 import React, { useContext, useEffect } from "react";
 import { FlatList, Platform, View } from "react-native";
 import ContainerContentListEmpty from "../ContainerContentListEmpty";
@@ -18,6 +17,7 @@ import {
   setListProducts,
   setListProductsFiltered,
 } from "@/src/redux/productSlice";
+import CardColumnProductItem from "../CardColumnProductItem";
 
 type CatalogListComponentProps = {
   checkPermission: () => void;
@@ -104,7 +104,7 @@ const CatalogListComponent: React.FC<CatalogListComponentProps> = React.memo(
         ]}
         numColumns={2}
         renderItem={({ item, index }) => (
-          <CardProductItem
+          <CardColumnProductItem
             key={index}
             productItem={item}
             onAddProduct={() => {}}
