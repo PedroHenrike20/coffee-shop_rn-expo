@@ -8,7 +8,6 @@ import CustomButton from "@/src/components/CustomButton";
 import { AuthContext } from "@/src/context/AuthContext";
 import { RootStackLoginParamList } from "@/src/navigation/types";
 import { AuthContextModel } from "@/src/models/AuthContextModel";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 type PropsRoute = {
   navigation: NativeStackScreenProps<RootStackLoginParamList, "Home">;

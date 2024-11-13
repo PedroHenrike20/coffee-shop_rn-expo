@@ -4,7 +4,6 @@ import {
   User,
   signInWithEmailAndPassword,
   signOut,
-  UserCredential,
   sendPasswordResetEmail,
 } from "firebase/auth";
 import { db, getAuth } from "@/firebaseConfig";
@@ -12,10 +11,9 @@ import {
   AuthContextModel,
   AuthProvideModel,
 } from "@/src/models/AuthContextModel";
-import { collection, doc, GeoPoint, getDoc, getDocs } from "firebase/firestore";
+import { doc, GeoPoint, getDoc } from "firebase/firestore";
 import { UserModel } from "@/src/models/UserModel";
-import { OrderModel } from "@/src/models/OrderModel";
-import { Alert } from "react-native";
+import * as SplashScreen from 'expo-splash-screen';
 
 export const AuthContext = createContext<AuthContextModel>({
   user: null,
@@ -33,6 +31,7 @@ export const AuthProvider: React.FC<AuthProvideModel> = ({ children }) => {
   const [userModel, setUserModel] = useState<UserModel | null>(null);
 
   useEffect(() => {
+    SplashScreen.preventAutoHideAsync();
     const unsubscribe = onAuthStateChanged(
       getAuth(),
       async (userAuthenticated) => {
@@ -43,9 +42,10 @@ export const AuthProvider: React.FC<AuthProvideModel> = ({ children }) => {
           setUser(null);
           setUserModel(null);
         }
+        SplashScreen.hideAsync();
       }
     );
-
+    
     return () => unsubscribe();
   }, []);
 

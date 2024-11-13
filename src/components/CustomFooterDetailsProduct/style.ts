@@ -13,6 +13,13 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         gap: 34,
 
+        shadowColor: '#313131', 
+        shadowOffset: { width: 0, height: 10 }, 
+        shadowOpacity: 0.4, 
+        shadowRadius: 10,
+    
+        elevation: 5,
+
     },
 
     containerPriceProduct: {

@@ -1,13 +1,8 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect } from "react";
 import {
-  ActivityIndicator,
   Alert,
-  FlatList,
-  Platform,
-  Text,
   View,
 } from "react-native";
-import styles from "./components/CatalogListComponent/styles";
 
 import { AuthContext } from "@/src/context/AuthContext";
 import { ProductModel } from "@/src/models/ProductModel";
@@ -40,6 +35,8 @@ import {
   setListProductsFiltered,
 } from "@/src/redux/productSlice";
 import CatalogListComponent from "./components/CatalogListComponent";
+import { StatusBar } from "expo-status-bar";
+
 
 const CatalogScreen: React.FC = () => {
   const { user, userModel, loadUserData } =
@@ -232,10 +229,16 @@ const CatalogScreen: React.FC = () => {
 
   return (
     <View style={{ flex: 1 }}>
-      <CatalogListComponent
-        updateListProducts={updateListProducts}
-        checkPermission={checkPermission}
-      />
+      <StatusBar
+            backgroundColor="#000000"
+            hidden={false}
+            animated={true}
+            translucent={false}
+          />
+        <CatalogListComponent
+          updateListProducts={updateListProducts}
+          checkPermission={checkPermission}
+        />
     </View>
   );
 };

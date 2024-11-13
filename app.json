@@ -7,14 +7,14 @@
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
-    "statusBar": {
-      "backgroundColor": "#000",
-      "barStyle": "light-content",
+    "androidStatusBar": {
+      "backgroundColor": "#C67C4E",
       "translucent": false
     },
+    "backgroundColor": "#C67C4E",
     "splash": {
       "image": "./assets/images/splash.png",
-      "resizeMode": "contain",
+      "resizeMode": "cover",
       "backgroundColor": "#ffffff"
     },
     "ios": {

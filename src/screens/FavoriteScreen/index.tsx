@@ -16,6 +16,7 @@ import CardRowProductItem from "./components/CardRowProductItem";
 import ContainerContentListFavoriteEmpty from "./components/ContainerContentListFavoriteEmpty";
 import { setIsLoading } from "@/src/redux/productSlice";
 
+
 const FavoriteScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp<RootTabParamList>>();
   const [listProductFavorite, setListProductFavorite] = useState<
