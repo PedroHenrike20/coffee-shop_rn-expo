@@ -10,7 +10,7 @@ interface Location {
 
 interface StoreState {
   location: Location | null;
- 
+  showMapSearchStores: boolean;
   listStore: StoresItemPicker[] | null;
   storeSelected: string | null;
   
@@ -21,8 +21,8 @@ interface StoreState {
 const initialState: StoreState = {
   location: null,
   listStore: null,
+  showMapSearchStores: false,
   storeSelected: "",
-  
   isLoading: false,
 };
 
@@ -47,10 +47,15 @@ const storeSlice = createSlice({
     setStoreSelected(state, action: PayloadAction<string>) {
       state.storeSelected = action.payload;
     },
+
+    setShowMapSearchStores(state, action: PayloadAction<boolean>) {
+      state.showMapSearchStores = action.payload;
+    }
   },
 });
 
 export const {
+  setShowMapSearchStores,
   setIsLoading,
   setStoreSelected,
   setListStore,

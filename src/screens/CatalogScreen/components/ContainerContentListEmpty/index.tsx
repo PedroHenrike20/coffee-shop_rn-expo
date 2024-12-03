@@ -1,14 +1,18 @@
 import { RootState } from "@/src/redux/store";
 import { FontAwesome5 } from "@expo/vector-icons";
-import React from "react";
+import React, { useContext } from "react";
 import { ActivityIndicator, Text, View } from "react-native";
 import { useSelector } from "react-redux";
 import styles from "./styles";
+import MapViewComponent from "../MapViewComponent";
+import { AuthContext } from "@/src/context/AuthContext";
 
 const ContainerContentListEmpty: React.FC = () => {
-  const { listStore, storeSelected, isLoading } = useSelector(
+  const { listStore, storeSelected, isLoading, showMapSearchStores } = useSelector(
     (state: RootState) => state.store
   );
+
+  const { userModel } = useContext(AuthContext);
 
   const { listProductsFiltered, listProducts } = useSelector(
     (state: RootState) => state.products
@@ -18,18 +22,22 @@ const ContainerContentListEmpty: React.FC = () => {
     <View style={styles.container}>
       {isLoading ? (
         <ActivityIndicator color="#C67C4E" size={35} />
+      ) : (!showMapSearchStores && userModel?.location) ? (
+        <>
+        <MapViewComponent location={userModel.location}/>
+        </>
       ) : (
         <>
           {!(
             storeSelected === "" &&
             !listProductsFiltered &&
             listStore !== null &&
-            listStore.length > 0
+            listStore.length > 0 && !showMapSearchStores
           ) && <FontAwesome5 name="sad-tear" size={40} color="#C67C4E" />}
 
           {storeSelected !== "0" &&
             storeSelected !== "" &&
-            !listProductsFiltered && (
+            !listProductsFiltered && !showMapSearchStores && (
               <Text style={styles.labelMessageList}>
                 Nenhum produto disponível nessa loja...
               </Text>
@@ -37,7 +45,7 @@ const ContainerContentListEmpty: React.FC = () => {
 
           {listStore === null &&
             !listProductsFiltered &&
-            storeSelected === "" && (
+            storeSelected === "" && !showMapSearchStores && (
               <Text style={styles.labelMessageList}>
                 Nenhuma loja perto de você...
               </Text>
@@ -46,7 +54,7 @@ const ContainerContentListEmpty: React.FC = () => {
           {storeSelected === "" &&
             !listProductsFiltered &&
             listStore !== null &&
-            listStore.length > 0 && (
+            listStore.length > 0 && !showMapSearchStores && (
               <Text style={styles.labelMessageList}>
                 Selecione uma loja e comece a fazer o seu pedido agora mesmo!
               </Text>
@@ -56,7 +64,7 @@ const ContainerContentListEmpty: React.FC = () => {
             listProductsFiltered &&
             listProductsFiltered.length === 0 &&
             listProducts &&
-            listProducts.length > 0 && (
+            listProducts.length > 0 && !showMapSearchStores && (
               <Text style={styles.labelMessageList}>
                 Nenhum produto foi encontrado!
               </Text>

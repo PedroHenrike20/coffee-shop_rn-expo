@@ -20,13 +20,13 @@ import {
   onSnapshot,
 } from "firebase/firestore";
 import { db } from "@/firebaseConfig";
-import { getDistanceRadiusForKm } from "@/src/utils/getDistanceRadiusForKm";
 import { TabNavBar } from "@/src/components/CustomNavBar";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/src/redux/store";
 import {
   setIsLoading,
   setListStore,
+  setShowMapSearchStores,
   setStoreSelected,
 } from "@/src/redux/storeSlice";
 import {
@@ -46,10 +46,12 @@ const CatalogScreen: React.FC = () => {
 
   useEffect(() => {
     if (userModel) {
+      dispatch(setIsLoading(false));
       if (!userModel.location) {
         checkPermission();
       } else {
-        fetchStores(userModel.location, 400);
+        console.log('aq?')
+        setShowMapSearchStores(true);
       }
     } else {
       dispatch(setIsLoading(true));
@@ -101,8 +103,6 @@ const CatalogScreen: React.FC = () => {
         );
 
         await loadUserData(user?.uid!);
-
-        fetchStores(coords, 400);
       } catch (e) {
         Alert.alert("Erro", "Não foi possível atualizar sua localização!");
         dispatch(setIsLoading(false));
@@ -111,66 +111,7 @@ const CatalogScreen: React.FC = () => {
     []
   );
 
-  const fetchStores = useCallback(
-    async (
-      coords: Location.LocationObjectCoords | GeoPoint,
-      radius: number
-    ) => {
-      const radiusInDegrees = radius / 111;
-
-      const storesRef = collection(db, "stores");
-
-      const queryStores = query(
-        storesRef,
-        where(
-          "location",
-          ">=",
-          new GeoPoint(
-            coords.latitude - radiusInDegrees,
-            coords.longitude - radiusInDegrees
-          )
-        ),
-        where(
-          "location",
-          "<=",
-          new GeoPoint(
-            coords.latitude + radiusInDegrees,
-            coords.longitude + radiusInDegrees
-          )
-        )
-      );
-
-      const snapshotData = await getDocs(queryStores);
-
-      const stores: StoresItemPicker[] = [];
-
-      snapshotData.forEach((doc) => {
-        const storeData = doc.data();
-        const storeLocation = storeData.location;
-
-        const distance = getDistanceRadiusForKm(
-          coords.latitude,
-          coords.longitude,
-          storeLocation.latitude,
-          storeLocation.longitude
-        );
-
-        if (distance <= radius) {
-          stores.push({
-            value: doc.id,
-            label: storeData.name,
-          } as StoresItemPicker);
-        }
-      });
-
-      if (stores?.length > 0) {
-        dispatch(setListStore(stores));
-        dispatch(setStoreSelected(stores[0].value));
-      }
-      dispatch(setIsLoading(false));
-    },
-    []
-  );
+  
 
   const updateListProducts = useCallback(async (storeId: string) => {
     try {

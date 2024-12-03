@@ -96,6 +96,8 @@ const HeaderCatalog: React.FC = React.memo(() => {
                 placeholder: styles.textStyleDropdown,
                 inputIOS: styles.textStyleDropdown,
                 inputAndroid: styles.textStyleDropdown,
+                inputIOSContainer: styles.containerPicker,
+                inputAndroidContainer: styles.containerPicker
               }}
               placeholder={{ label: "Selecione uma cafeteria...", value: "" }}
             />

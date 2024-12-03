@@ -26,7 +26,7 @@ const StackNavigatorTabHome: React.FC = () => {
           headerTitle: "Detalhes",
           headerShown: true,
           headerTitleAlign: "center",
-          headerBackTitleVisible: false,
+          headerBackTitle: undefined,
         }}
       />
     </Stack.Navigator>

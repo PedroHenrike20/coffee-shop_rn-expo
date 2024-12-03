@@ -5,5 +5,5 @@ export interface StoresModel {
     address: string;
     location: GeoPoint;
     name: string;
-    openingHours: Date;
+    openNow: boolean;
 }

@@ -42,6 +42,11 @@ const styles = StyleSheet.create({
     width: "100%",
   },
 
+  containerPicker: {
+    width: 'auto',
+    zIndex: 10
+  },
+
   inputStyleDropdown: {
     backgroundColor: "transparent",
     borderWidth: 0,
