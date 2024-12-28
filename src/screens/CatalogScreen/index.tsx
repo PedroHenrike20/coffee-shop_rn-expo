@@ -50,7 +50,7 @@ const CatalogScreen: React.FC = () => {
       if (!userModel.location) {
         checkPermission();
       } else {
-        console.log('aq?')
+        console.log('aq??')
         setShowMapSearchStores(true);
       }
     } else {

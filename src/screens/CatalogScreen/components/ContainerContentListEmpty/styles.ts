@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 const styles = StyleSheet.create({
     container: {
         gap: 12,
-        alignItems: "center"
+        alignItems: "center",
     },
 
     labelMessageList: {

@@ -4,7 +4,9 @@ const styles = StyleSheet.create({
     container: {        
         gap: 12,
         flex: 1,
+        minHeight: "100%",
         paddingHorizontal: 24,
+        paddingTop: 24,
         justifyContent: 'center',
         backgroundColor: '#313131',
     },

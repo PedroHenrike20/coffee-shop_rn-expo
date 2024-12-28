@@ -24,6 +24,7 @@ import { StoresItemPicker } from "../HeaderCatalog";
 import {
   setIsLoading,
   setListStore,
+  setShowMapSearchStores,
   setStoreSelected,
 } from "@/src/redux/storeSlice";
 import { StoresModel } from "@/src/models/StoresModel";
@@ -34,7 +35,8 @@ type MapViewComponentProps = {
 };
 const MapViewComponent: React.FC<MapViewComponentProps> = ({ location }) => {
   const [currentRadius] = useState(new Animated.Value(0));
-  const [storesFounded, setStoresFounded] = useState<
+  const [loadStores, setLoadStores] = useState(false);
+  const [storesFound, setStoresFound] = useState<
     Pick<StoresModel, "id" | "location" | "name" | "openNow">[]
   >([]);
   const [radius, setRadius] = useState(0);
@@ -82,8 +84,7 @@ const MapViewComponent: React.FC<MapViewComponentProps> = ({ location }) => {
 
       const snapshotData = await getDocs(queryStores);
 
-      const stores: StoresItemPicker[] = [];
-      const listUniqueStore = new Set(storesFounded);
+      const listUniqueStore = new Set(storesFound);
 
       snapshotData.forEach((doc) => {
         const storeData = doc.data();
@@ -97,10 +98,6 @@ const MapViewComponent: React.FC<MapViewComponentProps> = ({ location }) => {
         );
 
         if (distance <= radius) {
-          // stores.push({
-          //   value: doc.id,
-          //   label: storeData.name,
-          // } as StoresItemPicker);
           listUniqueStore.add({
             id: doc.id,
             name: storeData.name,
@@ -108,15 +105,23 @@ const MapViewComponent: React.FC<MapViewComponentProps> = ({ location }) => {
             openNow: storeData.openNow,
           });
         }
-        setStoresFounded(Array.from(listUniqueStore));
       });
-      // if (stores?.length > 0) {
-      //   dispatch(setListStore(stores));
-      //   dispatch(setStoreSelected(stores[0].value));
-      // }
+      setStoresFound(Array.from(listUniqueStore));
     },
     []
   );
+
+  useEffect(() => {
+    if (loadStores) {
+      const stores: StoresItemPicker[] = storesFound.map((item) => ({
+        label: item.name,
+        value: item.id,
+      }));
+      dispatch(setListStore(stores));
+      dispatch(setStoreSelected(stores[0].value));
+      setShowMapSearchStores(false);
+    }
+  }, [loadStores]);
 
   useEffect(() => {
     if (location) {
@@ -127,6 +132,8 @@ const MapViewComponent: React.FC<MapViewComponentProps> = ({ location }) => {
             fetchStores(location, newRadius / 1000);
           } else {
             clearInterval(intervalId);
+            setLoadStores(true);
+            setShowMapSearchStores(false);
           }
           return newRadius;
         });
@@ -162,42 +169,40 @@ const MapViewComponent: React.FC<MapViewComponentProps> = ({ location }) => {
   }, [radius, location]);
 
   return (
-    <View style={styles.container}>
-      <MapView
-        ref={mapRef}
-        style={styles.containerMap}
-        showsUserLocation={true}
-        initialRegion={{
-          latitude: location?.latitude,
-          longitude: location?.longitude,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        }}
-      >
-        {storesFounded.map((store, index) => (
-          <Marker
-            key={index}
-            coordinate={{
-              latitude: store.location.latitude,
-              longitude: store.location.longitude,
-            }}
-            title={store.name}
-            description={store.openNow ? "Aberto agora!" : "Fechado!"}
-          />
-        ))}
-
-        <Circle
-          center={{
-            latitude: location?.latitude!,
-            longitude: location?.longitude!,
+    <MapView
+      ref={mapRef}
+      style={styles.containerMap}
+      showsUserLocation={true}
+      initialRegion={{
+        latitude: location?.latitude,
+        longitude: location?.longitude,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+      }}
+    >
+      {storesFound.map((store, index) => (
+        <Marker
+          key={index}
+          coordinate={{
+            latitude: store.location.latitude,
+            longitude: store.location.longitude,
           }}
-          radius={radius}
-          fillColor="rgba(0, 0, 255, 0.3)"
-          strokeColor="rgba(0, 0, 255, 1)"
-          strokeWidth={2}
+          title={store.name}
+          description={store.openNow ? "Aberto agora!" : "Fechado!"}
         />
-      </MapView>
-    </View>
+      ))}
+
+      <Circle
+        center={{
+          latitude: location?.latitude!,
+          longitude: location?.longitude!,
+        }}
+        radius={radius}
+        fillColor="rgba(0, 0, 255, 0.3)"
+        strokeColor="rgba(0, 0, 255, 1)"
+        strokeWidth={2}
+      />
+    </MapView>
   );
 };
 

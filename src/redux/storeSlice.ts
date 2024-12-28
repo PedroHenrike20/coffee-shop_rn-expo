@@ -34,8 +34,6 @@ const storeSlice = createSlice({
       state.location = action.payload;
     },
 
-
-
     setListStore(state, action: PayloadAction<StoresItemPicker[]>) {
       state.listStore = action.payload;
     },

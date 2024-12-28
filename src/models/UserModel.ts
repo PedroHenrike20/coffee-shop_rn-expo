@@ -3,7 +3,10 @@ import { OrderModel } from "./OrderModel";
 
 export interface UserModel {
   uid: string;
-  fullName: string | null;
+  fullName: string | undefined;
+  email: string | undefined,
+  password: string | undefined,
+  confirmPassword: string | undefined,
   city: string;
   address: string;
   phone: string;

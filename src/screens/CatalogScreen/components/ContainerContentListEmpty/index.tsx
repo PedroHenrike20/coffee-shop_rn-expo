@@ -1,6 +1,6 @@
 import { RootState } from "@/src/redux/store";
 import { FontAwesome5 } from "@expo/vector-icons";
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { ActivityIndicator, Text, View } from "react-native";
 import { useSelector } from "react-redux";
 import styles from "./styles";
@@ -18,11 +18,16 @@ const ContainerContentListEmpty: React.FC = () => {
     (state: RootState) => state.products
   );
 
+  useEffect(() => {
+    console.log(showMapSearchStores)
+  }, [showMapSearchStores]);
+
+
   return (
     <View style={styles.container}>
       {isLoading ? (
         <ActivityIndicator color="#C67C4E" size={35} />
-      ) : (!showMapSearchStores && userModel?.location) ? (
+      ) : (showMapSearchStores && userModel?.location) ? (
         <>
         <MapViewComponent location={userModel.location}/>
         </>
